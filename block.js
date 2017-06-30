@@ -17,7 +17,7 @@
 		if(_host.indexOf('bing.com')>=0){
 			_bing=true;
 			_google=false;
-		}else{
+		}else {
 			_bing=false;
 			_google=true;
 		}
@@ -36,36 +36,26 @@
 			}
 
 		}else{
-			// document.addEventListener("DOMNodeInserted",function(e) {
-			// 	console.log(_google)
-			// });
-			// Firefox和Chrome早期版本中带有前缀
+			//由于google由ajax请求生成的页面，不能用DOMContentLoaded事件，需要监听页面元素变化的MutationObserver事件
 			var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-
-			// 选择目标节点
 			var target = document.body;
-			 
 			// 创建观察者对象
 			
 			var observer = new MutationObserver(function(mutations) {
 				
 					mutations.forEach(function(mutation) {
 						if (mutation.addedNodes && (mutation.addedNodes.length > 0)) {
-						var _res=mutation.target.getElementsByClassName('g');
-						if (_res&&_res.length>0) {
-							for (var i = 0; i < _res.length; i++) {
-								var _html=_res[i].querySelector('cite').innerHTML
-								if (_html.indexOf('baidu')) {
-									_res[i].innerHTML="<p style='font-size:12px;border:1px solid #eee;'>已为您屏蔽一条来自百度的垃圾信息！</p>";
+						var _res=document.getElementById('rso');
+						if (_res) {
+							var _cite=_res.getElementsByTagName('cite');
+							for (var i = 0; i < _cite.length; i++) {
+								if (_cite[i].innerHTML.indexOf('baidu')>=0) {
+									// $(_cite[i]).closest('.g').css({'opacity':'0','height':'0'});
+									$(_cite[i]).closest('.g').html("<p style='font-size:12px;border:1px solid #eee;'>已为您屏蔽一条来自百度的垃圾信息！</p>");
 								}
 							}
-
 						}
 					}
-					// var node = mutation.target.querySelector("cite");
-					// if (node) {
-					// 	console.log(node.innerHTML)
-					// }
 					}); 
 				
 			     
@@ -75,63 +65,13 @@
 				childList: true,
 				subtree: true
 			 }
-
-			 // var regex = /<a.*?>[^<]*<\/a>/;
-			 var regex = /baidu.com$/;
-
-			 /* Traverse 'rootNode' and its descendants and modify '<a>' tags */
-			 // function modifyLinks(rootNode) {
-			 //     var nodes = [rootNode];
-			 //     while (nodes.length > 0) {
-			 //         var node = nodes.shift();
-			 //         if (node.tagName == "A") {
-			 //             /* Modify the '<a>' element */
-			 //             node.innerHTML = "~~" + node.innerHTML + "~~";
-			 //         } else {
-			 //              If the current node has children, queue them for further
-			 //              * processing, ignoring any '<script>' tags. 
-			 //             [].slice.call(node.children).forEach(function(childNode) {
-			 //                 if (childNode.tagName != "SCRIPT") {
-			 //                     nodes.push(childNode);
-			 //                 }
-			 //             });
-			 //         }
-			 //     }
-			 // }
-
-			 /* Observer1: Looks for 'div.search' */
-			 // var observer1 = new MutationObserver(function(mutations) {
-			 // 	console.log(mutations);
-			 //     /* For each MutationRecord in 'mutations'... */
-			 //     mutations.forEach(function(mutation) {
-			 //         /* ...if nodes have beed added... */
-			 //         if (mutation.addedNodes && (mutation.addedNodes.length > 0)) {
-			 //             /* ...look for 'div#search' */
-			 //             var node = mutation.target.querySelector("div.g");
-			 //             if (node) {
-			 //             	node.innerHTML="<p style='font-size:12px;border:1px solid #eee;'>已为您屏蔽一条来自百度的垃圾信息！</p>";
-			 //                 /* 'div#search' found; stop observer 1 and start observer 2 */
-			 //                 // observer1.disconnect();
-			 //                 // observer2.observe(node, config);
-			 //                 if (regex.test(node.innerHTML)) {
-			 //                     /* Modify any '<a>' elements already in the current node */
-			 //                     // modifyLinks(node);
-			 //                     node.setAttribute('style','backgroud:#ff4a53;')
-			 //                 }
-			 //                 return true;
-			 //             }
-			 //         }
-			 //     });
-			 // });
-
 			observer.observe(target, config);
-			// observer.disconnect();
 		}
  	},
  	bingDoit:function(a,b){
+ 		//此前用原生的js做bing的过滤，后来适配google的时候就引了个jq进来，所以代码有混写，先将就着用吧。
  		let _node=a;
  		let _b=b.toUpperCase();
- 		// $(a).closest('li').hide();
  		while(_node.nodeName!=_b){
  			_node=_node.parentNode
  			if (_node.nodeName==_b) {

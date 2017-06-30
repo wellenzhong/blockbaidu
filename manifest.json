@@ -19,7 +19,7 @@
 },
 "content_scripts": [ {
    "js": [ "jquery.min.js","block.js" ],
-   "matches": [ "*://cn.bing.com/*","*://*.google.com/*"],
+   "matches": [ "*://*.bing.com/*","*://*.google.com/*"],
    "run_at":"document_end"
 } ],
 "background": {

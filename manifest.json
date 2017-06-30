@@ -1,0 +1,28 @@
+{
+"manifest_version": 2,
+"name": "Block Baidu",
+"description": "block the search result from baidu,just as tieba,jingyan etc,which is wasting your time.",
+"version": "1.0",
+"browser_action": {
+   "default_icon": {
+      "128": "128.png",
+      "16": "icon.png",
+      "48": "48.png"
+   },
+"default_popup": "popup.html",
+"default_title": "block baidu"
+},
+"icons": {
+   "128": "128.png",
+   "16": "icon.png",
+   "48": "48.png"
+},
+"content_scripts": [ {
+   "js": [ "jquery.min.js","block.js" ],
+   "matches": [ "*://cn.bing.com/*","*://*.google.com/*"],
+   "run_at":"document_end"
+} ],
+"background": {
+   "scripts": [ "jquery.min.js" ]
+}
+}
